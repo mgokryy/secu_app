@@ -1,0 +1,64 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
+export default function ListGrids() {
+  const [grids, setGrids] = useState([]);
+
+  useEffect(() => {
+    async function load() {
+      const res = await fetch("/api/grids/list");
+      const data = await res.json();
+      setGrids(data);
+    }
+    load();
+  }, []);
+
+  return (
+    <div>
+      <h2>Liste des grilles</h2>
+
+      <table border="1" cellPadding="8">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Taille</th>
+            <th>Créée le</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {grids.map((g) => (
+            <tr key={g.id}>
+              <td>{g.id}</td>
+              <td>{g.title}</td>
+              <td>{g.size} x {g.size}</td>
+              <td>{new Date(g.created_at).toLocaleString()}</td>
+              <td>
+                <Link to={`/admin/grids/view/${g.id}`}>Voir</Link> |  
+                <Link to={`/admin/grids/edit/${g.id}`}>Éditer</Link> |  
+                <span
+                    style={{ color: "blue", textDecoration: "underline", cursor: "pointer" }}
+                    onClick={async () => {
+                        if (!confirm("Supprimer cette grille ?")) return;
+
+                        await fetch(`/api/grids/delete/${g.id}`, {
+                        method: "DELETE",
+                        });
+
+                        setGrids(grids.filter(x => x.id !== g.id));
+                    }}
+                    >
+                    Supprimer
+                </span>
+
+
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

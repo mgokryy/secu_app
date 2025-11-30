@@ -1,41 +1,53 @@
 import { getPool } from "../_db.js";
+import { verifyAdmin } from "../_auth.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
-  const { title, size, grid } = req.body;
+  // Vérification ADMIN
+  const admin = await verifyAdmin(req, res);
+  if (!admin) return;
 
-  if (!title || !size || !grid) {
-    return res.status(400).json({ message: "Paramètres manquants" });
+  const { title, size, words, cells } = req.body;
+
+  if (!title || !size || !Array.isArray(words) || !Array.isArray(cells)) {
+    return res.status(400).json({ message: "Données manquantes ou invalides" });
   }
-  
 
   try {
     const pool = getPool();
 
+    // 🔹 Insert grille
     const [result] = await pool.query(
-      "INSERT INTO grids (title, size, created_by) VALUES (?, ?, ?)",
-      [title, size, 1] // TODO : remplacer 1 par l’ID du user connecté
+      `INSERT INTO grids (title, size, created_by) VALUES (?, ?, ?)`,
+      [title, size, admin.id]
     );
 
-    const grid_id = result.insertId;
+    const gridId = result.insertId;
 
-    for (let x = 0; x < size; x++) {
-      for (let y = 0; y < size; y++) {
-        await pool.query(
-          "INSERT INTO grid_cells (grid_id, x, y, letter) VALUES (?, ?, ?, ?)",
-          [grid_id, x, y, grid[x][y]]
-        );
-      }
-    }
+    // 🔹 Insert cellules
+    const cellValues = cells.map(c => [gridId, c.x, c.y, c.letter]);
+
+    await pool.query(
+      `INSERT INTO grid_cells (grid_id, x, y, letter) VALUES ?`,
+      [cellValues]
+    );
+
+    // 🔹 Insert mots
+    const wordValues = words.map(w => [gridId, w.toUpperCase()]);
+
+    await pool.query(
+      `INSERT INTO grid_words (grid_id, word) VALUES ?`,
+      [wordValues]
+    );
 
     return res.status(201).json({
-      message: "Grille sauvegardée avec succès",
-      grid_id
+      message: "Grille créée avec succès",
+      id: gridId
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("ERREUR CREATE GRID :", err);
     return res.status(500).json({ message: "Erreur serveur" });
   }
 }

@@ -5,21 +5,25 @@ export default function ViewGrid() {
   const { id } = useParams();
   const [gridData, setGridData] = useState(null);
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     async function load() {
-      const res = await fetch(`/api/grids/view/${id}`);
-      const data = await res.json();
+      const res = await fetch(`/api/grids/view/${id}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
 
+      const data = await res.json();
       const size = data.grid.size;
 
-      // créer une grille vide
       const grid = Array.from({ length: size }, () =>
         Array.from({ length: size }, () => "")
       );
 
-      // remplir la grille avec les lettres
       data.cells.forEach(({ x, y, letter }) => {
-        grid[x][y] = letter;
+        grid[y][x] = letter; // 🔥 correction essentielle
       });
 
       setGridData({ info: data.grid, grid });

@@ -3,15 +3,39 @@ import { Link } from "react-router-dom";
 
 export default function ListGrids() {
   const [grids, setGrids] = useState([]);
+  const token = localStorage.getItem("token");  // 🔥 récupère le token
 
   useEffect(() => {
     async function load() {
-      const res = await fetch("/api/grids/list");
+      const res = await fetch("/api/grids/list", {
+        headers: {
+          "Authorization": `Bearer ${token}`,  // 🔥 Obligatoire pour admin
+        }
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        alert("Accès refusé");
+        return;
+      }
+
       const data = await res.json();
       setGrids(data);
     }
     load();
   }, []);
+
+  const handleDelete = async (id) => {
+    if (!confirm("Supprimer cette grille ?")) return;
+
+    await fetch(`/api/grids/delete/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`, // 🔥 aussi obligatoire
+      }
+    });
+
+    setGrids((prev) => prev.filter((g) => g.id !== id));
+  };
 
   return (
     <div>
@@ -39,21 +63,11 @@ export default function ListGrids() {
                 <Link to={`/admin/grids/view/${g.id}`}>Voir</Link> |  
                 <Link to={`/admin/grids/edit/${g.id}`}>Éditer</Link> |  
                 <span
-                    style={{ color: "blue", textDecoration: "underline", cursor: "pointer" }}
-                    onClick={async () => {
-                        if (!confirm("Supprimer cette grille ?")) return;
-
-                        await fetch(`/api/grids/delete/${g.id}`, {
-                        method: "DELETE",
-                        });
-
-                        setGrids(grids.filter(x => x.id !== g.id));
-                    }}
-                    >
-                    Supprimer
+                  style={{ color: "blue", textDecoration: "underline", cursor: "pointer" }}
+                  onClick={() => handleDelete(g.id)}
+                >
+                  Supprimer
                 </span>
-
-
               </td>
             </tr>
           ))}

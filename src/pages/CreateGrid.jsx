@@ -6,42 +6,66 @@ export default function CreateGrid() {
   const [size, setSize] = useState(10);
   const [words, setWords] = useState("");
   const [preview, setPreview] = useState(null);
-  const [message, setMessage] = useState("");
+
+  const token = localStorage.getItem("token");
 
   const handleGenerate = () => {
-    const list = words.split(",").map(w => w.trim());
+    const list = words
+      .split(",")
+      .map(w => w.trim())
+      .filter(w => w.length > 0);
+
     const grid = generateGrid(size, list);
     setPreview(grid);
-    };
-    const handleSave = async () => {
+  };
+
+  const handleSave = async () => {
     if (!preview) {
-        alert("Génère une grille avant de sauvegarder !");
-        return;
+      alert("Génère une grille avant de sauvegarder !");
+      return;
     }
 
+    // 🔥 Convertir le tableau 2D → liste de cellules
+    const cells = [];
+    for (let y = 0; y < preview.length; y++) {
+      for (let x = 0; x < preview[y].length; x++) {
+        cells.push({
+          x,
+          y,
+          letter: preview[y][x]
+        });
+      }
+    }
+
+    // 🔥 Convertir words string → tableau
+    const wordList = words
+      .split(",")
+      .map(w => w.trim().toUpperCase())
+      .filter(w => w.length > 0);
+
     const res = await fetch("/api/grids/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
         title,
         size,
-        grid: preview
-        })
+        words: wordList,
+        cells: cells  // 🔥 très important !
+      })
     });
-    
 
     const data = await res.json();
 
     if (res.ok) {
-        alert("Grille créée avec succès !");
-        window.location.href = "/admin/grids"; // 🔥 REDIRECTION
+      alert("Grille créée avec succès !");
+      window.location.href = "/admin/grids";
     } else {
-        alert(data.message);
+      alert(data.message);
     }
-    };
-
-
-
+  };
 
   return (
     <div>
@@ -57,7 +81,7 @@ export default function CreateGrid() {
       <input
         type="number"
         value={size}
-        onChange={e => setSize(parseInt(e.target.value))}
+        onChange={e => setSize(Number(e.target.value))}
       />
 
       <textarea
@@ -86,8 +110,6 @@ export default function CreateGrid() {
           <button onClick={handleSave}>Enregistrer</button>
         </>
       )}
-
-      {message && <p>{message}</p>}
     </div>
   );
 }

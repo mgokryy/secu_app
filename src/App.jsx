@@ -6,29 +6,45 @@ import AdminDashboard from "./pages/AdminDashboard";
 import CreateGrid from "./pages/CreateGrid";
 import AdminRoute from "./components/AdminRoute";
 import GuestRoute from "./components/GuestRoute";
+import UserRoute from "./components/UserRoute"; 
 import ListGrids from "./pages/ListGrids";
 import ViewGrid from "./pages/ViewGrid";
 import EditGrid from "./pages/EditGrid";
-
+import UserGrids from "./pages/UserGrids";
+import PlayGrid from "./pages/PlayGrid";
+import Leaderboard from "./pages/Leaderboard.jsx";
 
 
 export default function App() {
   return (
     <div className="app-container">
+
       <nav>
+        {/* PAS CONNECTÉ */}
         {!localStorage.getItem("token") && (
           <>
             <Link to="/register">Inscription</Link> | 
             <Link to="/login">Connexion</Link>
           </>
         )}
-        {localStorage.getItem("role") === "ADMIN" && (
+
+        {/* CONNECTÉ NON ADMIN (USER) */}
+        {localStorage.getItem("token") && localStorage.getItem("role") === "USER" && (
           <>
-            <Link to="/admin" style={{ marginRight: "10px" }}>Accueil admin</Link>
-            <Link to="/admin/grids" style={{ marginRight: "10px" }}>Grilles</Link>
+            <Link to="/grids" style={{ marginRight: "10px" }}>Grilles</Link>
           </>
         )}
 
+        {/* ADMIN */}
+        {localStorage.getItem("role") === "ADMIN" && (
+          <>
+            <Link to="/admin" style={{ marginRight: "10px" }}>Accueil admin</Link>
+            <Link to="/admin/grids" style={{ marginRight: "10px" }}>Grilles admin</Link>
+            <Link to="/grids" style={{ marginRight: "10px" }}>Grilles (jouer)</Link>
+          </>
+        )}
+
+        {/* DÉCONNEXION */}
         {localStorage.getItem("token") && (
           <button
             onClick={() => {
@@ -52,77 +68,52 @@ export default function App() {
         )}
       </nav>
 
-
-
-      
       <Routes>
-        <Route
-          path="/register"
-          element={
-            <GuestRoute>
-              <Register />
-            </GuestRoute>
-          }
-        />
+        {/* GUEST */}
+        <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+        <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
 
-        <Route
-          path="/login"
-          element={
-            <GuestRoute>
-              <Login />
-            </GuestRoute>
-          }
-        />
-
+        {/* USER */}
         <Route path="/user" element={<UserDashboard />} />
 
-        <Route
-          path="/admin"
+        <Route 
+          path="/grids" 
           element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
+            <UserRoute>
+              <UserGrids />
+            </UserRoute>
+          } 
         />
-        
 
+        <Route 
+          path="/play/:id" 
+          element={
+            <UserRoute>
+              <PlayGrid />
+            </UserRoute>
+          }
+        />
 
-        <Route
-          path="/admin/grids/create"
-          element={
-            <AdminRoute>
-              <CreateGrid />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/grids"
-          element={
-            <AdminRoute>
-              <ListGrids />
-            </AdminRoute>
-          }
-        />
         
         <Route
-          path="/admin/grids/view/:id"
+          path="/leaderboard/:id"
           element={
-            <AdminRoute>
-              <ViewGrid />
-            </AdminRoute>
+            <UserRoute>
+              <Leaderboard />
+            </UserRoute>
           }
         />
-        <Route
-          path="/admin/grids/edit/:id"
-          element={
-            <AdminRoute>
-              <EditGrid />
-            </AdminRoute>
-          }
-        />
+
+
+        {/* ADMIN */}
+        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+
+        <Route path="/admin/grids/create" element={<AdminRoute><CreateGrid /></AdminRoute>} />
+        <Route path="/admin/grids" element={<AdminRoute><ListGrids /></AdminRoute>} />
+        <Route path="/admin/grids/view/:id" element={<AdminRoute><ViewGrid /></AdminRoute>} />
+        <Route path="/admin/grids/edit/:id" element={<AdminRoute><EditGrid /></AdminRoute>} />
+
       </Routes>
-
-
 
     </div>
   );

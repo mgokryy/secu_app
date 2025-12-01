@@ -2,6 +2,20 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { generateGrid } from "../utils/generateGrid";
 
+function prepareInitialGrid(data) {
+  const emptyGrid = Array.from(
+    { length: data.grid.size },
+    () => Array.from({ length: data.grid.size }, () => "")
+  );
+
+  data.cells.forEach(({ x, y, letter }) => {
+    emptyGrid[y][x] = letter;
+  });
+
+  return emptyGrid;
+}
+
+
 export default function EditGrid() {
   const { id } = useParams();
 
@@ -28,21 +42,6 @@ export default function EditGrid() {
     return res.json();
   }
 
-  // -------------------------------------------------
-  // 2) Construire la grille initiale depuis **data**
-  // -------------------------------------------------
-  function prepareInitialGrid(data) {
-    const emptyGrid = Array.from(
-      { length: data.grid.size },
-      () => Array.from({ length: data.grid.size }, () => "")
-    );
-
-    data.cells.forEach(({ x, y, letter }) => {
-      emptyGrid[y][x] = letter;
-    });
-
-    return emptyGrid;
-  }
 
   // -------------------------------------------------
   // 3) Charger et injecter dans les states
@@ -152,14 +151,18 @@ export default function EditGrid() {
           <div className="game-grid-wrapper" style={{ display: "inline-block", marginBottom: "20px" }}>
             <table className="game-grid">
               <tbody>
-                {preview.map((row, i) => (
-                  <tr key={`row-${i}`}>
-                    {row.map((cell, j) => (
-                      <td key={`cell-${i}-${j}`}>{cell}</td>
+                {preview.map((row, y) => (
+                  <tr key={row.join("")}>
+                    {row.map((cell, x) => (
+                      <td key={`${cell}-${x}-${y}`}>
+                        {cell}
+                      </td>
                     ))}
                   </tr>
                 ))}
+
               </tbody>
+
 
             </table>
           </div>

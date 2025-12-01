@@ -74,9 +74,7 @@ export default function Register() {
           <input
             type="checkbox"
             checked={consent}
-            onChange={(e) => setConsent(e.target.checked)}
-          />
-          J'accepte les conditions
+            onChange={(e) => setConsent(e.target.checked)}/>J'accepte les conditions
         </label>
 
 

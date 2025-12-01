@@ -252,8 +252,9 @@ export default function PlayGrid() {
   // Rendu
   // -----------------------
   return (
-    <div
-      role="application"
+    <section
+      role="button"
+      aria-label="Zone de jeu"
       tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && endSelection()}
       onMouseUp={endSelection}
@@ -268,6 +269,7 @@ export default function PlayGrid() {
         touchAction: "none",
       }}
     >
+
       <h2 style={{ marginBottom: "10px" }}>Grille : {info?.title}</h2>
 
       <div style={{ marginBottom: "10px" }}>
@@ -330,6 +332,41 @@ export default function PlayGrid() {
             ))}
           </tbody>
         </table>
+        <table style={{ borderCollapse: "collapse" }}>
+          <tbody>
+            {grid.map((row) => (
+              <tr key={row.join("")}>
+                {row.map((letter, x) => {
+                  const y = row.indexOf(letter); 
+                  return (
+                    <td
+                      key={`${letter}-${x}`}
+                      data-x={x}
+                      data-y={grid.indexOf(row)}
+                      onMouseDown={() => startSelection(grid.indexOf(row), x)}
+                      onMouseEnter={() => continueSelection(grid.indexOf(row), x)}
+                      style={{
+                        border: "1px solid #888",
+                        width: "34px",
+                        height: "34px",
+                        textAlign: "center",
+                        fontSize: "20px",
+                        userSelect: "none",
+                        cursor: "pointer",
+                        transition: "background-color 0.2s ease",
+                        backgroundColor: bgColor,
+                        fontWeight: "600",
+                      }}
+                    >
+                      {letter}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
       </div>
 
       <div style={{ marginTop: "25px" }}>
@@ -363,6 +400,6 @@ export default function PlayGrid() {
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }

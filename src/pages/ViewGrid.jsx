@@ -41,14 +41,21 @@ export default function ViewGrid() {
       <div className="game-grid-wrapper" style={{ display: "inline-block" }}>
         <table className="game-grid">
           <tbody>
-            {gridData.grid.map((row, rowIndex) => (
-              <tr key={`row-${rowIndex}`}>
-                {row.map((cell, colIndex) => (
-                  <td key={`cell-${rowIndex}-${colIndex}`}>{cell}</td>
-                ))}
-              </tr>
-            ))}
+            {gridData.grid.map((row) => {
+              const rowKey = row.join(""); // 🔥 stable si la ligne change
+
+              return (
+                <tr key={rowKey}>
+                  {row.map((cell, colIndex) => {
+                    const cellKey = `${rowKey}-${colIndex}-${cell}`; // 🔥 100% stable
+
+                    return <td key={cellKey}>{cell}</td>;
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
+
         </table>
       </div>
     </div>

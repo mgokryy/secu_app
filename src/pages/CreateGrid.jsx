@@ -98,15 +98,19 @@ export default function CreateGrid() {
           <table border="1">
             <tbody>
               {preview.map((row, i) => (
-                <tr key={`row-${i}`}>
-
+                <tr key={`row-${row.join("")}`}>
                   {row.map((cell, j) => (
-                    <td key={`cell-${i}-${j}`} style={{ padding: "5px" }}>{cell}</td>
-                    
+                    <td 
+                      key={`cell-${i}-${j}-${cell}`} 
+                      style={{ padding: "5px" }}
+                    >
+                      {cell}
+                    </td>
                   ))}
                 </tr>
               ))}
             </tbody>
+
           </table>
 
           <button onClick={handleSave}>Enregistrer</button>

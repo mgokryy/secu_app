@@ -70,13 +70,14 @@ export default function ListGrids() {
                   Éditer
                 </Link>
 
-                <span
+
+                <button
                   className="action-badge action-delete"
                   onClick={() => handleDelete(g.id)}
-                  style={{ cursor: "pointer" }}
                 >
                   Supprimer
-                </span>
+                </button>
+
               </div>
             </td>
 

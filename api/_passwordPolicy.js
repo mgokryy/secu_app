@@ -10,7 +10,8 @@ export function validatePassword(password) {
   if (!/[A-Z]/.test(password)) {
     errors.push("Le mot de passe doit contenir au moins une lettre majuscule.");
   }
-  if (!/[0-9]/.test(password)) {
+  if (!/\d/.test(password)) {
+
     errors.push("Le mot de passe doit contenir au moins un chiffre.");
   }
   if (!/[^A-Za-z0-9]/.test(password)) {

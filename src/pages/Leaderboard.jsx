@@ -57,7 +57,8 @@ export default function Leaderboard() {
               </tr>
             ) : (
               scores.map((row, index) => (
-                <tr key={index}>
+                <tr key={`score-${row.user_id}`}>
+
                   <td>{index + 1}</td>
                   <td>{row.name}</td>
                   <td><strong>{row.best_score}</strong></td>

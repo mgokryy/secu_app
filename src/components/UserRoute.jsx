@@ -15,3 +15,7 @@ export default function UserRoute({ children }) {
   return children;
 }
 
+UserRoute.propTypes = {
+    children: PropTypes.node.isRequired,
+};
+

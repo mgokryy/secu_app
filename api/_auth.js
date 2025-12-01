@@ -1,13 +1,9 @@
 import jwt from "jsonwebtoken";
 
-/**
- * Vérifie qu’un utilisateur est connecté (toute personne avec un token valide)
- */
 export function verifyAuth(req, res) {
   try {
     const auth = req.headers.authorization;
-
-    if (!auth || !auth.startsWith("Bearer ")) {
+    if (!auth?.startsWith("Bearer ")) {
       res.status(401).json({ message: "Token manquant" });
       return null;
     }
@@ -15,7 +11,7 @@ export function verifyAuth(req, res) {
     const token = auth.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = decoded; // { id, role }
+    req.user = decoded; 
 
     return decoded;
   } catch (err) {
@@ -23,20 +19,4 @@ export function verifyAuth(req, res) {
     res.status(401).json({ message: "Token invalide" });
     return null;
   }
-}
-
-/**
- * Vérifie que l’utilisateur est ADMIN
- */
-export function verifyAdmin(req, res) {
-  const decoded = verifyAuth(req, res);
-
-  if (!decoded) return null;
-
-  if (decoded.role !== "ADMIN") {
-    res.status(403).json({ message: "Accès refusé (admin seulement)" });
-    return null;
-  }
-
-  return decoded; // retourne { id, role }
 }

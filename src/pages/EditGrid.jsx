@@ -12,49 +12,79 @@ export default function EditGrid() {
 
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    async function load() {
-      const res = await fetch(`/api/grids/view/${id}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
+  // -------------------------------------------------
+  // 1) Récupération de la grille
+  // -------------------------------------------------
+  async function fetchGrid() {
+    const res = await fetch(`/api/grids/view/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      if (res.status === 401 || res.status === 403) {
-        alert("Accès refusé");
-        return;
-      }
-
-      const data = await res.json();
-      setTitle(data.grid.title);
-      setSize(data.grid.size);
-
-      if (data.words && data.words.length > 0) {
-        setWords(data.words.join(", "));
-      }
-
-      const initialGrid = Array.from({ length: data.grid.size }, () =>
-        Array.from({ length: data.grid.size }, () => "")
-      );
-
-      data.cells.forEach(({ x, y, letter }) => {
-        initialGrid[y][x] = letter; // 🔥 correct
-      });
-
-      setPreview(initialGrid);
+    if (res.status === 401 || res.status === 403) {
+      alert("Accès refusé");
+      return null;
     }
 
-    load();
+    return res.json();
+  }
+
+  // -------------------------------------------------
+  // 2) Construire la grille initiale depuis **data**
+  // -------------------------------------------------
+  function prepareInitialGrid(data) {
+    const emptyGrid = Array.from(
+      { length: data.grid.size },
+      () => Array.from({ length: data.grid.size }, () => "")
+    );
+
+    data.cells.forEach(({ x, y, letter }) => {
+      emptyGrid[y][x] = letter;
+    });
+
+    return emptyGrid;
+  }
+
+  // -------------------------------------------------
+  // 3) Charger et injecter dans les states
+  // -------------------------------------------------
+  async function handleLoad() {
+    const data = await fetchGrid();
+    if (!data) return; // accès refusé
+
+    setTitle(data.grid.title);
+    setSize(data.grid.size);
+
+    if (data.words?.length > 0) {
+      setWords(data.words.join(", "));
+    }
+
+    const grid = prepareInitialGrid(data);
+    setPreview(grid);
+  }
+
+  // -------------------------------------------------
+  // useEffect SUPER SIMPLE → plus d'imbrication !
+  // -------------------------------------------------
+  useEffect(() => {
+    handleLoad();
   }, [id, token]);
 
+  // -------------------------------------------------
+  // Génération
+  // -------------------------------------------------
   const handleGenerate = () => {
     const list = words
       .split(",")
-      .map(w => w.trim())
-      .filter(w => w.length > 0);
+      .map((w) => w.trim())
+      .filter((w) => w.length > 0);
 
     const grid = generateGrid(size, list);
     setPreview(grid);
   };
 
+  // -------------------------------------------------
+  // Sauvegarde
+  // -------------------------------------------------
   const handleSave = async () => {
     if (!preview) {
       alert("Génère une grille avant !");
@@ -62,54 +92,59 @@ export default function EditGrid() {
     }
 
     const cells = [];
-    for (let y = 0; y < preview.length; y++) {
-      for (let x = 0; x < preview[y].length; x++) {
-        cells.push({ x, y, letter: preview[y][x] });
-      }
-    }
+    preview.forEach((row, y) => {
+      row.forEach((letter, x) => {
+        cells.push({ x, y, letter });
+      });
+    });
 
     const wordList = words
       .split(",")
-      .map(w => w.trim().toUpperCase())
-      .filter(w => w.length > 0);
+      .map((w) => w.trim().toUpperCase())
+      .filter((w) => w.length > 0);
 
     const res = await fetch(`/api/grids/update/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         title,
         size,
         words: wordList,
-        cells: cells
-      })
+        cells,
+      }),
     });
 
     const data = await res.json();
 
     if (res.ok) {
       alert("Grille mise à jour avec succès !");
-      window.location.href = "/admin/grids";   // 🔥 REDIRECTION
+      globalThis.location.href = "/admin/grids";
     } else {
       alert(data.message);
     }
   };
 
+  // -------------------------------------------------
+  // Rendu
+  // -------------------------------------------------
   return (
     <div>
       <h2>Modifier la grille {id}</h2>
 
-      <input value={title} onChange={e => setTitle(e.target.value)} />
-      <input type="number" value={size} onChange={e => setSize(parseInt(e.target.value))} />
-
-      <textarea
-        value={words}
-        onChange={e => setWords(e.target.value)}
+      <input value={title} onChange={(e) => setTitle(e.target.value)} />
+      <input
+        type="number"
+        value={size}
+        onChange={(e) => setSize(Number.parseInt(e.target.value, 10))}
       />
 
+      <textarea value={words} onChange={(e) => setWords(e.target.value)} />
+
       <button onClick={handleGenerate}>Regénérer</button>
+
       {preview && (
         <>
           <h3>Aperçu :</h3>
@@ -118,13 +153,14 @@ export default function EditGrid() {
             <table className="game-grid">
               <tbody>
                 {preview.map((row, i) => (
-                  <tr key={i}>
+                  <tr key={`row-${i}`}>
                     {row.map((cell, j) => (
-                      <td key={j}>{cell}</td>
+                      <td key={`cell-${i}-${j}`}>{cell}</td>
                     ))}
                   </tr>
                 ))}
               </tbody>
+
             </table>
           </div>
 
@@ -133,7 +169,6 @@ export default function EditGrid() {
           </button>
         </>
       )}
-
     </div>
   );
 }

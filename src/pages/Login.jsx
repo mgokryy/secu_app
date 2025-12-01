@@ -28,9 +28,9 @@ export default function Login() {
 
         // Rediriger selon le rôle
         if (data.role === "ADMIN") {
-          window.location.href = "/admin";
+          globalThis.location.href = "/admin";
         } else {
-          window.location.href = "/user";
+          globalThis.location.href = "/user";
         }
       } else {
         setMessage(data.message);

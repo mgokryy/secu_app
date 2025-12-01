@@ -26,13 +26,13 @@ export default function App() {
             <Link to="/login">Connexion</Link>
           </>
         )}
+        
 
         {/* CONNECTÉ NON ADMIN (USER) */}
         {localStorage.getItem("token") && localStorage.getItem("role") === "USER" && (
-          <>
-            <Link to="/grids" style={{ marginRight: "10px" }}>Grilles</Link>
-          </>
+          <Link to="/grids" style={{ marginRight: "10px" }}>Grilles</Link>
         )}
+
 
         {/* ADMIN */}
         {localStorage.getItem("role") === "ADMIN" && (
@@ -60,7 +60,7 @@ export default function App() {
               localStorage.removeItem("token");
               localStorage.removeItem("role");
               localStorage.removeItem("name");
-              window.location.href = "/login";
+              globalThis.location.href = "/login";
             }}
             style={{
               marginLeft: "20px",

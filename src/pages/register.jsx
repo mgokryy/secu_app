@@ -79,6 +79,7 @@ export default function Register() {
           J'accepte les conditions
         </label>
 
+
         <button type="submit">S'inscrire</button>
       </form>
 

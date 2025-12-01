@@ -11,3 +11,6 @@ export default function GuestRoute({ children }) {
 
   return children;
 }
+GuestRoute.propTypes = {
+    children: PropTypes.node.isRequired,
+};

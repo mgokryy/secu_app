@@ -61,7 +61,7 @@ export default function CreateGrid() {
 
     if (res.ok) {
       alert("Grille créée avec succès !");
-      window.location.href = "/admin/grids";
+      globalThis.location.href = "/admin/grids";
     } else {
       alert(data.message);
     }
@@ -98,9 +98,11 @@ export default function CreateGrid() {
           <table border="1">
             <tbody>
               {preview.map((row, i) => (
-                <tr key={i}>
+                <tr key={`row-${i}`}>
+
                   {row.map((cell, j) => (
-                    <td key={j} style={{ padding: "5px" }}>{cell}</td>
+                    <td key={`cell-${i}-${j}`} style={{ padding: "5px" }}>{cell}</td>
+                    
                   ))}
                 </tr>
               ))}

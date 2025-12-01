@@ -9,3 +9,6 @@ export default function AdminRoute({ children }) {
 
   return children;
 }
+AdminRoute.propTypes = {
+    children: PropTypes.node.isRequired,
+};

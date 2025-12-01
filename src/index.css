@@ -229,8 +229,8 @@ td {
 /* Mot trouvé */
 .word-badge.found {
   background: #d8f7dd;
-  color: #1e8e3e;
-  border-color: #1e8e3e;
+  color: #0c3818; 
+  border-color: #0c3818;
   text-decoration: line-through;
 }
 /* ---------------------------------------------------------

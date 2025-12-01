@@ -7,29 +7,29 @@ export default function ViewGrid() {
 
   const token = localStorage.getItem("token");
 
+  async function loadGrid() {
+    const res = await fetch(`/api/grids/view/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+    const size = data.grid.size;
+
+    const grid = Array.from({ length: size }, () =>
+      Array.from({ length: size }, () => "")
+    );
+
+    data.cells.forEach(({ x, y, letter }) => {
+      grid[y][x] = letter;
+    });
+
+    setGridData({ info: data.grid, grid });
+  }
+
   useEffect(() => {
-    async function load() {
-      const res = await fetch(`/api/grids/view/${id}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-
-      const data = await res.json();
-      const size = data.grid.size;
-
-      const grid = Array.from({ length: size }, () =>
-        Array.from({ length: size }, () => "")
-      );
-
-      data.cells.forEach(({ x, y, letter }) => {
-        grid[y][x] = letter; 
-      });
-
-      setGridData({ info: data.grid, grid });
-    }
-
-    load();
+    loadGrid();
   }, [id, token]);
 
   if (!gridData) return <p>Chargement…</p>;
@@ -38,21 +38,19 @@ export default function ViewGrid() {
     <div>
       <h2>Grille : {gridData.info.title}</h2>
 
-      
       <div className="game-grid-wrapper" style={{ display: "inline-block" }}>
         <table className="game-grid">
           <tbody>
-            {gridData.grid.map((row, i) => (
-              <tr key={i}>
-                {row.map((cell, j) => (
-                  <td key={j}>{cell}</td>
+            {gridData.grid.map((row, rowIndex) => (
+              <tr key={`row-${rowIndex}`}>
+                {row.map((cell, colIndex) => (
+                  <td key={`cell-${rowIndex}-${colIndex}`}>{cell}</td>
                 ))}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
     </div>
   );
 }

@@ -1,7 +1,15 @@
 import { getPool } from "../_db.js";
+import { verifyAdmin } from "../_auth.js";
+import { setSecurityHeaders } from "../_securityHeaders.js";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).end();
+
+  setSecurityHeaders(res);
+
+  // Route réservée aux admins (liste de toutes les grilles)
+  const admin = verifyAdmin(req, res);
+  if (!admin) return;
 
   try {
     const pool = getPool();

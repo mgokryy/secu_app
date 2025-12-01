@@ -1,9 +1,24 @@
-export function isPasswordStrong(password) {
-  const minLength = 12;
-  const hasLower = /[a-z]/.test(password);
-  const hasUpper = /[A-Z]/.test(password);
-  const hasDigit = /\d/.test(password);
-  const hasSpecial = /[^A-Za-z0-9]/.test(password);
-  const types = [hasLower, hasUpper, hasDigit, hasSpecial].filter(Boolean).length;
-  return password.length >= minLength && types >= 3;
+export function validatePassword(password) {
+  const errors = [];
+
+  if (password.length < 12) {
+    errors.push("Le mot de passe doit contenir au moins 12 caractères.");
+  }
+  if (!/[a-z]/.test(password)) {
+    errors.push("Le mot de passe doit contenir au moins une lettre minuscule.");
+  }
+  if (!/[A-Z]/.test(password)) {
+    errors.push("Le mot de passe doit contenir au moins une lettre majuscule.");
+  }
+  if (!/[0-9]/.test(password)) {
+    errors.push("Le mot de passe doit contenir au moins un chiffre.");
+  }
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    errors.push("Le mot de passe doit contenir au moins un caractère spécial.");
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
 }

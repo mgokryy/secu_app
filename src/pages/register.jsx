@@ -20,7 +20,7 @@ export default function Register() {
 
       const data = await res.json();
       setMessage(data.message);
-    } catch (err) {
+    } catch {
       setMessage("Erreur réseau");
     }
   }

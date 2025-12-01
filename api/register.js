@@ -1,10 +1,12 @@
 import { getPool } from './_db.js';
 
 import bcrypt from 'bcrypt';
-import { isPasswordStrong } from './_passwordPolicy.js';
+import { validatePassword } from './_passwordPolicy.js';
+import { setSecurityHeaders } from './_securityHeaders.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
+  setSecurityHeaders(res);
 
   const { email, name, password, consent } = req.body;
 
@@ -12,13 +14,32 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: 'Champs obligatoires manquants' });
   }
 
-  if (!isPasswordStrong(password)) {
-    return res.status(400).json({ message: 'Mot de passe trop faible' });
+  // Validation email simple pour le cahier des charges
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message: 'Email invalide' });
+  }
+
+  // 🔥 Validation mot de passe détaillée
+  const { valid, errors } = validatePassword(password);
+  if (!valid) {
+    return res.status(400).json({
+      message: "Mot de passe invalide",
+      errors, // → liste des erreurs spécifiques (taille, majuscule, etc.)
+    });
+  }
+
+  // Consentement RGPD obligatoire
+  if (consent !== true) {
+    return res.status(400).json({
+      message: 'Le consentement est obligatoire',
+    });
   }
 
   try {
     const pool = getPool();
 
+    // Vérifier si email déjà utilisé
     const [existing] = await pool.query(
       'SELECT id FROM users WHERE email = ?',
       [email]
@@ -28,15 +49,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Email déjà utilisé' });
     }
 
+    // Hash du mot de passe
     const hash = await bcrypt.hash(password, 10);
 
     await pool.query(
       `INSERT INTO users (email, name, password_hash, role, consent)
        VALUES (?, ?, ?, 'USER', ?)`,
-      [email, name, hash, consent === true ? 1 : 0]
+      [email, name, hash, 1]
     );
 
     return res.status(201).json({ message: 'Inscription réussie' });
+
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Erreur serveur' });

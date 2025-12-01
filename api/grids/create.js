@@ -1,8 +1,11 @@
 import { getPool } from "../_db.js";
 import { verifyAdmin } from "../_auth.js";
+import { setSecurityHeaders } from "../_securityHeaders.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
+
+  setSecurityHeaders(res);
 
   // Vérification ADMIN
   const admin = await verifyAdmin(req, res);

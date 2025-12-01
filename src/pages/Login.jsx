@@ -36,7 +36,7 @@ export default function Login() {
         setMessage(data.message);
       }
 
-    } catch (err) {
+      } catch {
       setMessage("Erreur réseau");
     }
   }

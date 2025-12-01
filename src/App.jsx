@@ -6,19 +6,18 @@ import AdminDashboard from "./pages/AdminDashboard";
 import CreateGrid from "./pages/CreateGrid";
 import AdminRoute from "./components/AdminRoute";
 import GuestRoute from "./components/GuestRoute";
-import UserRoute from "./components/UserRoute"; 
+import UserRoute from "./components/UserRoute";
 import ListGrids from "./pages/ListGrids";
 import ViewGrid from "./pages/ViewGrid";
 import EditGrid from "./pages/EditGrid";
 import UserGrids from "./pages/UserGrids";
 import PlayGrid from "./pages/PlayGrid";
 import Leaderboard from "./pages/Leaderboard.jsx";
-
+import Legal from "./pages/Legal.jsx";
 
 export default function App() {
   return (
     <div className="app-container">
-
       <nav>
         {/* PAS CONNECTÉ */}
         {!localStorage.getItem("token") && (
@@ -47,7 +46,17 @@ export default function App() {
         {/* DÉCONNEXION */}
         {localStorage.getItem("token") && (
           <button
-            onClick={() => {
+            onClick={async () => {
+              try {
+                // Appel à l’API pour détruire le cookie côté serveur
+                await fetch("/api/logout", {
+                  method: "POST",
+                  credentials: "include",
+                });
+              } catch {
+                // on ignore les erreurs ici, on nettoie quand même le client
+              }
+
               localStorage.removeItem("token");
               localStorage.removeItem("role");
               localStorage.removeItem("name");
@@ -113,8 +122,13 @@ export default function App() {
         <Route path="/admin/grids/view/:id" element={<AdminRoute><ViewGrid /></AdminRoute>} />
         <Route path="/admin/grids/edit/:id" element={<AdminRoute><EditGrid /></AdminRoute>} />
 
+        {/* Légal / RGPD */}
+        <Route path="/legal" element={<Legal />} />
       </Routes>
 
+      <footer style={{ marginTop: "30px", textAlign: "center", padding: "10px 0" }}>
+        <Link to="/legal">Mentions légales &amp; confidentialité</Link>
+      </footer>
     </div>
   );
 }

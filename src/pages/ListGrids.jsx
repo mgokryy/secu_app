@@ -22,7 +22,7 @@ export default function ListGrids() {
       setGrids(data);
     }
     load();
-  }, []);
+  }, [token]);
 
   const handleDelete = async (id) => {
     if (!confirm("Supprimer cette grille ?")) return;

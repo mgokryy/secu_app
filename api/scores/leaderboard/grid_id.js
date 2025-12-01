@@ -1,12 +1,10 @@
 import { getPool } from "../../_db.js";
-import { setSecurityHeaders } from "../../_securityHeaders.js";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).end();
 
-  setSecurityHeaders(res);
-
-  const { grid_id } = req.query;
+  // 🔥 Correction : utiliser req.params
+  const { grid_id } = req.params;
 
   try {
     const pool = getPool();

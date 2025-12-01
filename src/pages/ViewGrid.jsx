@@ -30,7 +30,7 @@ export default function ViewGrid() {
     }
 
     load();
-  }, [id]);
+  }, [id, token]);
 
   if (!gridData) return <p>Chargement…</p>;
 

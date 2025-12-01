@@ -43,7 +43,7 @@ export default function EditGrid() {
     }
 
     load();
-  }, [id]);
+  }, [id, token]);
 
   const handleGenerate = () => {
     const list = words

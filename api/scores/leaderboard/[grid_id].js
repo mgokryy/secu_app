@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
   setSecurityHeaders(res);
 
-  const { grid_id } = req.query;
+  const { grid_id } = req.params;
 
   try {
     const pool = getPool();

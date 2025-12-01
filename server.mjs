@@ -43,11 +43,7 @@ app.get("/api/grids/list", (req, res) => gridsList(req, res)); // admin
 app.get("/api/grids/public-list", (req, res) => gridsPublicList(req, res)); // user connecté
 
 // vue d'une grille (GET) - handler attend req.query.id
-app.get("/api/grids/view/:id", (req, res) => {
-  req.query = { id: req.params.id };
-  gridsView(req, res);
-});
-
+app.get("/api/grids/view/:id", gridsView);
 // mise à jour / suppression d'une grille (admin) - handlers utilisent req.params.id
 app.put("/api/grids/update/:id", (req, res) => gridsUpdate(req, res));
 app.delete("/api/grids/delete/:id", (req, res) => gridsDelete(req, res));
@@ -56,10 +52,7 @@ app.delete("/api/grids/delete/:id", (req, res) => gridsDelete(req, res));
 app.post("/api/scores", (req, res) => scoreHandler(req, res));
 
 // handler leaderboard/[grid_id].js attend req.query.grid_id
-app.get("/api/scores/leaderboard/:grid_id", (req, res) => {
-  req.query = { grid_id: req.params.grid_id };
-  leaderboardHandler(req, res);
-});
+app.get("/api/scores/leaderboard/:grid_id", leaderboardHandler);
 
 const PORT = process.env.PORT || 3001;
 

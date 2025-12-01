@@ -9,85 +9,89 @@ export default function CreateGrid() {
 
   const token = localStorage.getItem("token");
 
+  // -------------------------------------------------
+  // GÉNÉRER LA GRILLE
+  // -------------------------------------------------
   const handleGenerate = () => {
     const list = words
       .split(",")
-      .map(w => w.trim())
-      .filter(w => w.length > 0);
+      .map((w) => w.trim().toUpperCase())
+      .filter((w) => w.length > 0);
+
+    if (list.length === 0) {
+      alert("Ajoute au moins un mot !");
+      return;
+    }
 
     const grid = generateGrid(size, list);
     setPreview(grid);
   };
 
+  // -------------------------------------------------
+  // ENVOYER AU SERVEUR
+  // -------------------------------------------------
   const handleSave = async () => {
     if (!preview) {
-      alert("Génère une grille avant de sauvegarder !");
+      alert("Génère une grille d'abord !");
       return;
     }
 
-    // 🔥 Convertir le tableau 2D → liste de cellules
     const cells = [];
-    for (let y = 0; y < preview.length; y++) {
-      for (let x = 0; x < preview[y].length; x++) {
-        cells.push({
-          x,
-          y,
-          letter: preview[y][x]
-        });
-      }
-    }
-
-    // 🔥 Convertir words string → tableau
-    const wordList = words
-      .split(",")
-      .map(w => w.trim().toUpperCase())
-      .filter(w => w.length > 0);
+    preview.forEach((row, y) => {
+      row.forEach((letter, x) => {
+        cells.push({ x, y, letter });
+      });
+    });
 
     const res = await fetch("/api/grids/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         title,
         size,
-        words: wordList,
-        cells: cells  // 🔥 très important !
-      })
+        words: words
+          .split(",")
+          .map((w) => w.trim().toUpperCase())
+          .filter((w) => w.length > 0),
+        cells,
+      }),
     });
 
     const data = await res.json();
-
     if (res.ok) {
-      alert("Grille créée avec succès !");
-      globalThis.location.href = "/admin/grids";
+      alert("Grille créée !");
+      window.location.href = "/admin/grids";
     } else {
-      alert(data.message);
+      alert(data.message || "Erreur serveur");
     }
   };
 
+  // -------------------------------------------------
+  // RENDU
+  // -------------------------------------------------
   return (
     <div>
       <h2>Créer une grille</h2>
 
       <input
-        type="text"
         placeholder="Titre de la grille"
         value={title}
-        onChange={e => setTitle(e.target.value)}
+        onChange={(e) => setTitle(e.target.value)}
       />
 
       <input
         type="number"
         value={size}
-        onChange={e => setSize(Number(e.target.value))}
+        onChange={(e) => setSize(Number(e.target.value))}
       />
 
       <textarea
         placeholder="Mots séparés par des virgules"
         value={words}
-        onChange={e => setWords(e.target.value)}
+        onChange={(e) => setWords(e.target.value)}
       />
 
       <button onClick={handleGenerate}>Générer la grille</button>
@@ -95,25 +99,49 @@ export default function CreateGrid() {
       {preview && (
         <>
           <h3>Aperçu :</h3>
-          <table border="1">
-            <tbody>
-              {preview.map((row, i) => (
-                <tr key={`row-${row.join("")}`}>
-                  {row.map((cell, j) => (
-                    <td 
-                      key={`cell-${i}-${j}-${cell}`} 
-                      style={{ padding: "5px" }}
-                    >
-                      {cell}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
 
-          </table>
+          {/* --------- STYLE PROPRE --------- */}
+          <div
+            style={{
+              padding: "10px",
+              borderRadius: "12px",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+              display: "inline-block",
+              background: "#f9f9ff",
+              marginBottom: "20px",
+            }}
+          >
+            <table style={{ borderCollapse: "collapse" }}>
+              <tbody>
+                {preview.map((row) => (
+                  <tr key={row.join("")}>
+                    {row.map((cell, index) => (
+                      <td
+                        key={row.join("") + "-" + index}
+                        style={{
+                          border: "1px solid #888",
+                          width: "34px",
+                          height: "34px",
+                          textAlign: "center",
+                          fontSize: "20px",
+                          padding: 0,
+                          userSelect: "none",
+                          backgroundColor: "white",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-          <button onClick={handleSave}>Enregistrer</button>
+          <button className="btn-primary" onClick={handleSave}>
+            Enregistrer
+          </button>
         </>
       )}
     </div>

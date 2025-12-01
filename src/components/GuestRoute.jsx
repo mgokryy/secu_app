@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-
+import PropTypes from "prop-types";
 export default function GuestRoute({ children }) {
   const token = localStorage.getItem("token");
 

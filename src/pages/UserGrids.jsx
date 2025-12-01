@@ -46,7 +46,9 @@ export default function UserGrids() {
               <td>{g.size} x {g.size}</td>
               <td>{new Date(g.created_at).toLocaleString()}</td>
               <td>
-                <Link to={`/play/${g.id}`}>Jouer</Link>
+                <div className="action-links">
+                  <Link to={`/play/${g.id}`} className="action-badge action-view">Jouer</Link>
+                </div>
               </td>
             </tr>
           ))}

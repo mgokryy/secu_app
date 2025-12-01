@@ -10,7 +10,7 @@ export default function AdminDashboard() {
       <Link to="/admin/grids">
         <button>Voir toutes les grilles</button>
       </Link>
-      <br /><br />
+      
 
       <Link to="/admin/grids/create">
         <button>Créer une nouvelle grille</button>

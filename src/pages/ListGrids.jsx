@@ -59,16 +59,27 @@ export default function ListGrids() {
               <td>{g.title}</td>
               <td>{g.size} x {g.size}</td>
               <td>{new Date(g.created_at).toLocaleString()}</td>
+              
               <td>
-                <Link to={`/admin/grids/view/${g.id}`}>Voir</Link> |  
-                <Link to={`/admin/grids/edit/${g.id}`}>Éditer</Link> |  
+              <div className="action-links">
+                <Link to={`/admin/grids/view/${g.id}`} className="action-badge action-view">
+                  Voir
+                </Link>
+
+                <Link to={`/admin/grids/edit/${g.id}`} className="action-badge action-edit">
+                  Éditer
+                </Link>
+
                 <span
-                  style={{ color: "blue", textDecoration: "underline", cursor: "pointer" }}
+                  className="action-badge action-delete"
                   onClick={() => handleDelete(g.id)}
+                  style={{ cursor: "pointer" }}
                 >
                   Supprimer
                 </span>
-              </td>
+              </div>
+            </td>
+
             </tr>
           ))}
         </tbody>

@@ -308,29 +308,26 @@ export default function PlayGrid() {
         </table>
       </div>
 
-      <div>
+      
+      <div style={{ marginTop: "25px" }}>
         <h3>Mots à trouver :</h3>
-        <ul style={{ paddingLeft: "20px" }}>
+
+        <div className="word-badges-container">
           {words.map((w, i) => (
-            <li
+            <div
               key={i}
-              style={{
-                textDecoration: foundWords.includes(w.toUpperCase())
-                  ? "line-through"
-                  : "none",
-                color: foundWords.includes(w.toUpperCase())
-                  ? "green"
-                  : "black",
-                fontWeight: foundWords.includes(w.toUpperCase())
-                  ? "600"
-                  : "400",
-              }}
+              className={
+                foundWords.includes(w.toUpperCase())
+                  ? "word-badge found"
+                  : "word-badge"
+              }
             >
               {w}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
+
 
       {hasFinished && (
         <div style={{ marginTop: "15px" }}>
@@ -339,7 +336,7 @@ export default function PlayGrid() {
           </h3>
           {info && (
             <p>
-              <Link to={`/leaderboard/${info.id}`}>
+              <Link to={`/leaderboard/${info.id}`} className="nav-btn">
                 Voir le classement de cette grille →
               </Link>
             </p>

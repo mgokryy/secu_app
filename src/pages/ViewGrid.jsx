@@ -23,7 +23,7 @@ export default function ViewGrid() {
       );
 
       data.cells.forEach(({ x, y, letter }) => {
-        grid[y][x] = letter; // 🔥 correction essentielle
+        grid[y][x] = letter; 
       });
 
       setGridData({ info: data.grid, grid });
@@ -38,17 +38,21 @@ export default function ViewGrid() {
     <div>
       <h2>Grille : {gridData.info.title}</h2>
 
-      <table border="1">
-        <tbody>
-          {gridData.grid.map((row, i) => (
-            <tr key={i}>
-              {row.map((cell, j) => (
-                <td key={j} style={{ padding: "5px" }}>{cell}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      
+      <div className="game-grid-wrapper" style={{ display: "inline-block" }}>
+        <table className="game-grid">
+          <tbody>
+            {gridData.grid.map((row, i) => (
+              <tr key={i}>
+                {row.map((cell, j) => (
+                  <td key={j}>{cell}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
     </div>
   );
 }

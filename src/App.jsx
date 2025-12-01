@@ -38,8 +38,8 @@ export default function App() {
         {/* ADMIN */}
         {localStorage.getItem("role") === "ADMIN" && (
           <>
-            <Link to="/admin" style={{ marginRight: "10px" }}>Accueil admin</Link>
-            <Link to="/admin/grids" style={{ marginRight: "10px" }}>Grilles admin</Link>
+            <Link to="/admin" style={{ marginRight: "10px" }}>Accueil</Link>
+            <Link to="/admin/grids" style={{ marginRight: "10px" }}>Grilles</Link>
             <Link to="/grids" style={{ marginRight: "10px" }}>Grilles (jouer)</Link>
           </>
         )}

@@ -110,25 +110,30 @@ export default function EditGrid() {
       />
 
       <button onClick={handleGenerate}>Regénérer</button>
-
       {preview && (
         <>
-          <h3>Aperçu</h3>
-          <table border="1">
-            <tbody>
-              {preview.map((row, i) => (
-                <tr key={i}>
-                  {row.map((cell, j) => (
-                    <td key={j}>{cell}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <h3>Aperçu :</h3>
 
-          <button onClick={handleSave}>Sauvegarder modification</button>
+          <div className="game-grid-wrapper" style={{ display: "inline-block", marginBottom: "20px" }}>
+            <table className="game-grid">
+              <tbody>
+                {preview.map((row, i) => (
+                  <tr key={i}>
+                    {row.map((cell, j) => (
+                      <td key={j}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <button className="btn-primary" onClick={handleSave}>
+            Enregistrer
+          </button>
         </>
       )}
+
     </div>
   );
 }

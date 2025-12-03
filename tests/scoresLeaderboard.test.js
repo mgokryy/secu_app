@@ -1,6 +1,5 @@
 import leaderboardHandler from "../api/scores/leaderboard/[grid_id].js";
 import * as db from "../api/_db.js";
-import { param } from "express-validator";
 
 vi.mock("../api/_db.js");
 

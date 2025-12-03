@@ -27,7 +27,8 @@ export default function ViewGrid() {
 
     setGridData({ info: data.grid, grid });
   }
-
+  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadGrid();
   }, [id, token]);

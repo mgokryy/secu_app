@@ -52,8 +52,10 @@ export default function App() {
                   method: "POST",
                   credentials: "include",
                 });
-              } catch {
+              } catch (err) {
+                console.error(err);
               }
+
 
               localStorage.removeItem("token");
               localStorage.removeItem("role");

@@ -55,6 +55,7 @@ export default function EditGrid() {
     setPreview(grid);
   }
   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     handleLoad();
   }, [id, token]);

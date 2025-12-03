@@ -27,22 +27,18 @@ export default async function handler(req, res) {
     if (!valid)
       return res.status(401).json({ message: 'Identifiants invalides' });
 
-    // Génération du JWT avec expiration courte (30 min) comme demandé
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "30m" }
     );
-
-    // Cookie de session sécurisé (HttpOnly + Secure + SameSite=Strict)
-    // Utilisé pour la conformité (preuve dans l’inspecteur réseau).
     const cookieParts = [
       `jwt=${token}`,
       "HttpOnly",
       "Secure",
       "SameSite=Strict",
       "Path=/",
-      // 30 minutes
+      
       `Max-Age=${30 * 60}`
     ];
     res.setHeader("Set-Cookie", cookieParts.join("; "));

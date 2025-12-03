@@ -7,7 +7,6 @@ export default async function handler(req, res) {
 
   setSecurityHeaders(res);
 
-  // Route réservée aux admins (liste de toutes les grilles)
   const admin = verifyAdmin(req, res);
   if (!admin) return;
 

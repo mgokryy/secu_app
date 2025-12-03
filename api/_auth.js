@@ -1,9 +1,5 @@
 import jwt from "jsonwebtoken";
 
-/**
- * Vérifie si un token JWT est présent et valide.
- * Ajoute req.user = { id, role }
- */
 export function verifyAuth(req, res) {
   try {
     const auth = req.headers.authorization;
@@ -16,7 +12,6 @@ export function verifyAuth(req, res) {
     const token = auth.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // decoded contient normalement : { id, role }
     req.user = decoded;
 
     return decoded;
@@ -27,12 +22,6 @@ export function verifyAuth(req, res) {
     return null;
   }
 }
-
-
-/**
- * Vérifie que l'utilisateur est admin
- * (NE va plus en base de données → plus d'erreurs SQL)
- */
 export function verifyAdmin(req, res) {
   const decoded = verifyAuth(req, res);
 

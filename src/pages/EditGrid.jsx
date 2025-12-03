@@ -26,9 +26,6 @@ export default function EditGrid() {
 
   const token = localStorage.getItem("token");
 
-  // -------------------------------------------------
-  // 1) Récupération de la grille
-  // -------------------------------------------------
   async function fetchGrid() {
     const res = await fetch(`/api/grids/view/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -43,12 +40,9 @@ export default function EditGrid() {
   }
 
 
-  // -------------------------------------------------
-  // 3) Charger et injecter dans les states
-  // -------------------------------------------------
   async function handleLoad() {
     const data = await fetchGrid();
-    if (!data) return; // accès refusé
+    if (!data) return; 
 
     setTitle(data.grid.title);
     setSize(data.grid.size);
@@ -60,17 +54,11 @@ export default function EditGrid() {
     const grid = prepareInitialGrid(data);
     setPreview(grid);
   }
-
-  // -------------------------------------------------
-  // useEffect SUPER SIMPLE → plus d'imbrication !
-  // -------------------------------------------------
+  
   useEffect(() => {
     handleLoad();
   }, [id, token]);
 
-  // -------------------------------------------------
-  // Génération
-  // -------------------------------------------------
   const handleGenerate = () => {
     const list = words
       .split(",")
@@ -81,9 +69,6 @@ export default function EditGrid() {
     setPreview(grid);
   };
 
-  // -------------------------------------------------
-  // Sauvegarde
-  // -------------------------------------------------
   const handleSave = async () => {
     if (!preview) {
       alert("Génère une grille avant !");
@@ -126,9 +111,6 @@ export default function EditGrid() {
     }
   };
 
-  // -------------------------------------------------
-  // Rendu
-  // -------------------------------------------------
   return (
     <div>
       <h2>Modifier la grille {id}</h2>

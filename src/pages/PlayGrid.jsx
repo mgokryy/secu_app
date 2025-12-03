@@ -1,4 +1,3 @@
-// src/pages/PlayGrid.jsx
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
@@ -33,9 +32,6 @@ export default function PlayGrid() {
 
   const token = localStorage.getItem("token");
 
-  // -----------------------
-  // Chargement grille
-  // -----------------------
   async function loadGrid() {
     const res = await fetch(`/api/grids/view/${id}`);
     const data = await res.json();
@@ -65,9 +61,6 @@ export default function PlayGrid() {
     loadGrid();
   }, [id]);
 
-  // -----------------------
-  // Timer
-  // -----------------------
   useEffect(() => {
     if (!startTime || hasFinished) return;
 
@@ -82,9 +75,6 @@ export default function PlayGrid() {
 
   const computeScore = (seconds) => Math.max(0, 1000 - seconds);
 
-  // -----------------------
-  // Score
-  // -----------------------
   const saveScore = async (durationSeconds, scoreValue) => {
     if (hasSavedScore || !info) return;
 
@@ -116,9 +106,6 @@ export default function PlayGrid() {
     }
   };
 
-  // -----------------------
-  // Helpers sélection
-  // -----------------------
   const getDxDy = (last, x, y) => ({
     dx: Math.sign(x - last.x),
     dy: Math.sign(y - last.y),
@@ -132,9 +119,6 @@ export default function PlayGrid() {
   const isNextCell = (last, x, y, direction) =>
     x === last.x + direction.dx && y === last.y + direction.dy;
 
-  // -----------------------
-  // Sélection
-  // -----------------------
   const startSelection = (y, x) => {
     if (hasFinished) return;
     setSelecting(true);
@@ -218,10 +202,7 @@ export default function PlayGrid() {
     setSelectedCells([]);
     setDirection(null);
   };
-
-  // -----------------------
-  // Touch mobile
-  // -----------------------
+  
   const handleTouch = (e, callback) => {
     const touch = e.touches[0];
     const el = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -237,9 +218,6 @@ export default function PlayGrid() {
   const handleTouchMove = (e) => handleTouch(e, continueSelection);
   const handleTouchEnd = () => endSelection();
 
-  // -----------------------
-  // UI helpers
-  // -----------------------
   const getFoundColor = (x, y) => {
     const cell = foundCells.find((c) => c.x === x && c.y === y);
     return cell ? cell.color : null;
@@ -247,10 +225,6 @@ export default function PlayGrid() {
 
   const isSelected = (x, y) =>
     selectedCells.some((c) => c.x === x && c.y === y);
-
-  // -----------------------
-  // Rendu
-  // -----------------------
   return (
     <section
       role="button"
@@ -292,6 +266,7 @@ export default function PlayGrid() {
           marginBottom: "20px",
         }}
       >
+        
         <table style={{ borderCollapse: "collapse" }}>
           <tbody>
             {grid.map((row, y) => (
@@ -306,7 +281,7 @@ export default function PlayGrid() {
 
                   return (
                     <td
-                      key={`cell-${y}-${x}`}
+                      key={`cell-${y}-${x}`}  
                       data-x={x}
                       data-y={y}
                       onMouseDown={() => startSelection(y, x)}
@@ -332,40 +307,7 @@ export default function PlayGrid() {
             ))}
           </tbody>
         </table>
-        <table style={{ borderCollapse: "collapse" }}>
-          <tbody>
-            {grid.map((row) => (
-              <tr key={row.join("")}>
-                {row.map((letter, x) => {
-                  const y = row.indexOf(letter); 
-                  return (
-                    <td
-                      key={`${letter}-${x}`}
-                      data-x={x}
-                      data-y={grid.indexOf(row)}
-                      onMouseDown={() => startSelection(grid.indexOf(row), x)}
-                      onMouseEnter={() => continueSelection(grid.indexOf(row), x)}
-                      style={{
-                        border: "1px solid #888",
-                        width: "34px",
-                        height: "34px",
-                        textAlign: "center",
-                        fontSize: "20px",
-                        userSelect: "none",
-                        cursor: "pointer",
-                        transition: "background-color 0.2s ease",
-                        backgroundColor: bgColor,
-                        fontWeight: "600",
-                      }}
-                    >
-                      {letter}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
 
       </div>
 

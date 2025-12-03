@@ -1,15 +1,12 @@
-// api/scores.js
 import { getPool } from "./_db.js";
 import { verifyAuth } from "./_auth.js";
 import { setSecurityHeaders } from "./_securityHeaders.js";
 
 export default async function handler(req, res) {
-  // On n'accepte que POST
   if (req.method !== "POST") return res.status(405).end();
 
   setSecurityHeaders(res);
 
-  // Utilisateur connecté (n'importe quel user)
   const user = verifyAuth(req, res);
   if (!user) return;
 

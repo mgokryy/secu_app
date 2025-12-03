@@ -25,14 +25,14 @@ function placeWord(grid, word) {
 
   // 8 directions possibles
   const directions = [
-    { dx: 1, dy: 0 },   // →
-    { dx: -1, dy: 0 },  // ←
-    { dx: 0, dy: 1 },   // ↓
-    { dx: 0, dy: -1 },  // ↑
-    { dx: 1, dy: 1 },   // ↘
-    { dx: -1, dy: 1 },  // ↙
-    { dx: 1, dy: -1 },  // ↗
-    { dx: -1, dy: -1 }, // ↖
+    { dx: 1, dy: 0 },   
+    { dx: -1, dy: 0 },  
+    { dx: 0, dy: 1 },   
+    { dx: 0, dy: -1 },  
+    { dx: 1, dy: 1 },   
+    { dx: -1, dy: 1 },  
+    { dx: 1, dy: -1 },  
+    { dx: -1, dy: -1 }, 
   ];
 
   while (!placed) {
@@ -52,10 +52,9 @@ function placeWord(grid, word) {
       endCol < 0 ||
       endCol >= size
     ) {
-      continue; // dépasse → recommence
+      continue; 
     }
 
-    // vérifier collisions
     let canPlace = true;
     for (let i = 0; i < word.length; i++) {
       const r = row + dy * i;
@@ -69,7 +68,6 @@ function placeWord(grid, word) {
 
     if (!canPlace) continue;
 
-    // placer le mot
     for (let i = 0; i < word.length; i++) {
       const r = row + dy * i;
       const c = col + dx * i;

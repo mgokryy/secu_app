@@ -9,8 +9,8 @@ export default function Legal() {
 
       <h3>Responsable du site</h3>
       <p>
-        Nom du responsable pédagogique : Votre Nom<br />
-        Contact : votre.email@example.com
+        Nom du responsable pédagogique : OKRY Marie-Grâce<br />
+        Contact : marie-grace.okry@gmail.com
       </p>
 
       <h3>Données collectées</h3>

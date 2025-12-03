@@ -48,13 +48,11 @@ export default function App() {
           <button
             onClick={async () => {
               try {
-                // Appel à l’API pour détruire le cookie côté serveur
                 await fetch("/api/logout", {
                   method: "POST",
                   credentials: "include",
                 });
               } catch {
-                // on ignore les erreurs ici, on nettoie quand même le client
               }
 
               localStorage.removeItem("token");

@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   setSecurityHeaders(res);
 
-  const admin = verifyAdmin(req, res); // 🔥 vérifie cookie + rôle
+  const admin = verifyAdmin(req, res); 
   if (!admin) return;
 
   const { id } = req.params;

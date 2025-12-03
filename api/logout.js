@@ -5,7 +5,6 @@ export default async function handler(req, res) {
 
   setSecurityHeaders(res);
 
-  // Invalidation du cookie côté serveur (Max-Age=0)
   res.setHeader(
     "Set-Cookie",
     [

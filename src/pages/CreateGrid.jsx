@@ -9,9 +9,6 @@ export default function CreateGrid() {
 
   const token = localStorage.getItem("token");
 
-  // -------------------------------------------------
-  // GÉNÉRER LA GRILLE
-  // -------------------------------------------------
   const handleGenerate = () => {
     const list = words
       .split(",")
@@ -27,9 +24,6 @@ export default function CreateGrid() {
     setPreview(grid);
   };
 
-  // -------------------------------------------------
-  // ENVOYER AU SERVEUR
-  // -------------------------------------------------
   const handleSave = async () => {
     if (!preview) {
       alert("Génère une grille d'abord !");
@@ -63,15 +57,12 @@ export default function CreateGrid() {
     const data = await res.json();
     if (res.ok) {
       alert("Grille créée !");
-      window.location.href = "/admin/grids";
+      globalThis.location.href = "/admin/grids";
     } else {
       alert(data.message || "Erreur serveur");
     }
   };
 
-  // -------------------------------------------------
-  // RENDU
-  // -------------------------------------------------
   return (
     <div>
       <h2>Créer une grille</h2>
@@ -100,7 +91,6 @@ export default function CreateGrid() {
         <>
           <h3>Aperçu :</h3>
 
-          {/* --------- STYLE PROPRE --------- */}
           <div
             style={{
               padding: "10px",

@@ -32,12 +32,11 @@ export default function Register() {
         return;
       }
 
-      // 🔥 Succès : message puis redirection
       setMessage("Inscription réussie !");
 
       setTimeout(() => {
         navigate("/login");
-      }, 1200); // délai 1.2 seconde
+      }, 1200); 
 
     } catch {
       setMessage("Erreur réseau");

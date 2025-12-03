@@ -7,7 +7,6 @@ export default async function handler(req, res) {
 
   setSecurityHeaders(res);
 
-  // Vérification ADMIN
   const admin = await verifyAdmin(req, res);
   if (!admin) return;
 
@@ -19,8 +18,6 @@ export default async function handler(req, res) {
 
   try {
     const pool = getPool();
-
-    // 🔹 Insert grille
     const [result] = await pool.query(
       `INSERT INTO grids (title, size, created_by) VALUES (?, ?, ?)`,
       [title, size, admin.id]
@@ -28,7 +25,6 @@ export default async function handler(req, res) {
 
     const gridId = result.insertId;
 
-    // 🔹 Insert cellules
     const cellValues = cells.map(c => [gridId, c.x, c.y, c.letter]);
 
     await pool.query(
@@ -36,7 +32,6 @@ export default async function handler(req, res) {
       [cellValues]
     );
 
-    // 🔹 Insert mots
     const wordValues = words.map(w => [gridId, w.toUpperCase()]);
 
     await pool.query(

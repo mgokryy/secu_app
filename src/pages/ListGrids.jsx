@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 
 export default function ListGrids() {
   const [grids, setGrids] = useState([]);
-  const token = localStorage.getItem("token");  // 🔥 récupère le token
+  const token = localStorage.getItem("token");  
 
   useEffect(() => {
     async function load() {
       const res = await fetch("/api/grids/list", {
         headers: {
-          "Authorization": `Bearer ${token}`,  // 🔥 Obligatoire pour admin
+          "Authorization": `Bearer ${token}`,  
         }
       });
 
@@ -30,7 +30,7 @@ export default function ListGrids() {
     await fetch(`/api/grids/delete/${id}`, {
       method: "DELETE",
       headers: {
-        "Authorization": `Bearer ${token}`, // 🔥 aussi obligatoire
+        "Authorization": `Bearer ${token}`, 
       }
     });
 

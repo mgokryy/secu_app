@@ -14,22 +14,19 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: 'Champs obligatoires manquants' });
   }
 
-  // Validation email simple pour le cahier des charges
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ message: 'Email invalide' });
   }
 
-  // 🔥 Validation mot de passe détaillée
   const { valid, errors } = validatePassword(password);
   if (!valid) {
     return res.status(400).json({
       message: "Mot de passe invalide",
-      errors, // → liste des erreurs spécifiques (taille, majuscule, etc.)
+      errors, 
     });
   }
 
-  // Consentement RGPD obligatoire
   if (consent !== true) {
     return res.status(400).json({
       message: 'Le consentement est obligatoire',
@@ -39,7 +36,6 @@ export default async function handler(req, res) {
   try {
     const pool = getPool();
 
-    // Vérifier si email déjà utilisé
     const [existing] = await pool.query(
       'SELECT id FROM users WHERE email = ?',
       [email]
@@ -49,7 +45,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Email déjà utilisé' });
     }
 
-    // Hash du mot de passe
     const hash = await bcrypt.hash(password, 10);
 
     await pool.query(

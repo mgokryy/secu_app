@@ -14,7 +14,7 @@ function createRes() {
     headers: {},
     status(code) {
       this.statusCode = code;
-      return this; // pour res.status(...).end()
+      return this;
     },
     json(payload) {
       this.body = payload;

@@ -42,12 +42,12 @@ export default function ViewGrid() {
         <table className="game-grid">
           <tbody>
             {gridData.grid.map((row) => {
-              const rowKey = row.join(""); // 🔥 stable si la ligne change
+              const rowKey = row.join("");
 
               return (
                 <tr key={rowKey}>
                   {row.map((cell, colIndex) => {
-                    const cellKey = `${rowKey}-${colIndex}-${cell}`; // 🔥 100% stable
+                    const cellKey = `${rowKey}-${colIndex}-${cell}`; 
 
                     return <td key={cellKey}>{cell}</td>;
                   })}

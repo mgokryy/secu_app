@@ -31,6 +31,7 @@ function createRes() {
 }
 
 describe("POST /api/register handler", () => {
+
   it("refuse si champs manquants", async () => {
     const req = createReq({ email: "", name: "", password: "" });
     const res = createRes();
@@ -48,9 +49,10 @@ describe("POST /api/register handler", () => {
       password: "Abcd1234!!EF",
       consent: true,
     });
+
     const res = createRes();
 
-    policy.isPasswordStrong.mockReturnValue(true);
+    policy.validatePassword.mockReturnValue({ valid: true, errors: [] });
 
     await handler(req, res);
 
@@ -67,12 +69,13 @@ describe("POST /api/register handler", () => {
     });
     const res = createRes();
 
-    policy.isPasswordStrong.mockReturnValue(false);
+    policy.validatePassword.mockReturnValue({ valid: false, errors: ["weak"] });
 
     await handler(req, res);
 
     expect(res.statusCode).toBe(400);
-    expect(res.body.message).toBe("Mot de passe trop faible");
+    expect(res.body.message).toBe("Mot de passe invalide");
+
   });
 
   it("refuse sans consentement explicite", async () => {
@@ -82,9 +85,10 @@ describe("POST /api/register handler", () => {
       password: "Abcd1234!!EF",
       consent: false,
     });
+
     const res = createRes();
 
-    policy.isPasswordStrong.mockReturnValue(true);
+    policy.validatePassword.mockReturnValue({ valid: true, errors: [] });
 
     await handler(req, res);
 
@@ -99,14 +103,13 @@ describe("POST /api/register handler", () => {
       password: "Abcd1234!!EF",
       consent: true,
     });
+
     const res = createRes();
 
-    policy.isPasswordStrong.mockReturnValue(true);
+    policy.validatePassword.mockReturnValue({ valid: true, errors: [] });
 
     const fakePool = {
-      query: vi.fn()
-        // SELECT id FROM users WHERE email = ?
-        .mockResolvedValueOnce([[{ id: 1 }]])
+      query: vi.fn().mockResolvedValueOnce([[{ id: 1 }]]),
     };
     db.getPool.mockReturnValue(fakePool);
 
@@ -123,18 +126,16 @@ describe("POST /api/register handler", () => {
       password: "Abcd1234!!EF",
       consent: true,
     });
+
     const res = createRes();
 
-    policy.isPasswordStrong.mockReturnValue(true);
+    policy.validatePassword.mockReturnValue({ valid: true, errors: [] });
     bcrypt.hash.mockResolvedValue("hashedPassword");
 
     const fakePool = {
-      query: vi
-        .fn()
-        // SELECT id FROM users WHERE email = ?
-        .mockResolvedValueOnce([[]])
-        // INSERT INTO users ...
-        .mockResolvedValueOnce([{ insertId: 1 }]),
+      query: vi.fn()
+        .mockResolvedValueOnce([[]])    // email non existant
+        .mockResolvedValueOnce([{ insertId: 1 }]), // insertion ok
     };
     db.getPool.mockReturnValue(fakePool);
 

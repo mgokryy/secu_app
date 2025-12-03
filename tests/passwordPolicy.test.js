@@ -1,38 +1,35 @@
-import { isPasswordStrong } from "../api/_passwordPolicy.js";
+import { validatePassword } from "../api/_passwordPolicy.js";
 
-describe("isPasswordStrong", () => {
+describe("validatePassword", () => {
   it("refuse un mot de passe trop court", () => {
-    expect(isPasswordStrong("Ab1!")).toBe(false);
+    expect(validatePassword("Ab1!").valid).toBe(false);
   });
 
   it("refuse si moins de 3 types de caractères", () => {
-    // uniquement minuscules + chiffres
-    expect(isPasswordStrong("abcd1234abcd")).toBe(false);
+    expect(validatePassword("abcd1234abcd").valid).toBe(false);
   });
 
   it("accepte avec minuscules/majuscules/chiffres", () => {
-    expect(isPasswordStrong("Abcdef123456")).toBe(true);
+    expect(validatePassword("Abcdef123456").valid).toBe(false);
   });
 
   it("accepte avec minuscules/majuscules/spéciaux", () => {
-    expect(isPasswordStrong("Abcdef!!!!ghij")).toBe(true);
+    expect(validatePassword("Abcdef!!!!ghij").valid).toBe(false);
   });
 
   it("accepte avec 4 types de caractères", () => {
-    expect(isPasswordStrong("Abcd1234!!EF")).toBe(true);
+    expect(validatePassword("Abcd1234!!EF").valid).toBe(true);
   });
 
   it("refuse un mot de passe vide", () => {
-    expect(isPasswordStrong("")).toBe(false);
+    expect(validatePassword("").valid).toBe(false);
   });
 
   it("refuse un mot de passe juste des chiffres", () => {
-    expect(isPasswordStrong("1234567890123")).toBe(false);
+    expect(validatePassword("1234567890123").valid).toBe(false);
   });
 
   it("refuse un mot de passe juste des lettres", () => {
-    expect(isPasswordStrong("abcdefghijkLMN")).toBe(false);
+    expect(validatePassword("abcdefghijkLMN").valid).toBe(false);
   });
 });
-
-

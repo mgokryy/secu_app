@@ -21,7 +21,7 @@
 
 ---
 
---- L'application n'ayant pas éta*é déployé 1.2 et 1.3 ne peuvent pas être répondu
+--- L'application n'ayant pas été déployé 1.2 1.3 8 ne peuvent pas être répondu
 
 ### 1.4 Dépendances saines
 
@@ -214,19 +214,7 @@ Voir Readme
 
 ### 5.2 Uploads de fichiers
 
-- [ ] **Extension vérifiée (Liste blanche)** : Seuls `.jpg`, `.png`, `.pdf` acceptés (pas `.exe`, `.php`)
-
-- [ ] **Type MIME vérifié côté serveur** : `mime_content_type()`, `finfo_file()`, ou libraire `file-type`
-
-- [ ] **Fichier renommé avec UUID** : `avatar_12345678-1234.jpg` au lieu de `mon-avatar.jpg`
-  - Empêche l'écrasement accidentel et l'exécution de scripts
-
-- [ ] **Stockage en dehors du web root** : Le fichier uploadé ne doit pas être accessible directement par URL
-
-**Preuves attendues :**
-- Code source montrant la validation d'extension et MIME
-- Tentative d'upload d'un `.exe` ou `.php` → Rejet
-- Capture écran montrant le fichier renommé en UUID
+Mon projet ne contenant pas d'upload de fichiers cette partie a été enlevé.
 
 ---
 

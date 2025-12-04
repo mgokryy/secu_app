@@ -17,7 +17,8 @@ Application web de jeux de mots mêlés avec gestion d'utilisateurs, système de
 9. [Utilisation de l'application](#utilisation-de-lapplication)
 10. [Tests](#tests)
 11. [Sécurité](#sécurité)
-12. [API Endpoints](#api-endpoints)
+12. [API Endpoints](#api-endpoints)  
+13. [Preuves](#preuves)
 
 ---
 
@@ -428,3 +429,79 @@ npm run test:coverage
   "errors": ["détail 1", "détail 2"]
 }
 ```
+
+## Preuves  
+
+### Système d'Authentification
+
+Voici donc les preuves de validations du système d'authentification:
+
+- Capture écran du formulaire d'inscription:
+![Mon image](./preuves/inscription.png)
+- Tentative inscription avec mot de passe faible → Rejet (avec message):
+![Mon image](./preuves/test_mdp.png)
+- Capture écran du formulaire de connexion:
+![Mon image](./preuves/connexion.png)
+- Capture écran du cookie dans l'inspecteur réseau (HttpOnly, Secure, SameSite visibles):
+![Mon image](./preuves/cookies.png)
+
+### Système de Rôles & Contrôle d'Accès
+
+- Capture écran login avec 2 comptes (1 Admin, 1 User)
+![Mon image](./preuves/login_admin.png)
+![Mon image](./preuves/login_user.png)
+- Capture écran de la page Admin accessible pour Admin
+![Mon image](./preuves/admin.png)
+La page uniquement accessible pour l'Admin est par exemple la page de liste des grilles où l'admin peut voir, éditer, supprimer une grille
+- Capture écran du rejet quand on essaie d'accéder /admin en tant qu'User
+Lorsqu'on essaie d'accéder à /admin l'utilisateur n'ayant pas le droit sera toujours bloqué sur sa page
+
+### Protections Contre Injections (SQL & XSS)
+
+- Code source montrant les requêtes préparées (avec ? ou ORM syntax)
+![Mon image](./preuves/requete.png)
+- Capture écran montrant un commentaire avec script affiché comme texte
+![Mon image](./preuves/script.png)
+- Tentative d'injection SQL simple → Rejet ou pas de résultat anormal
+![Mon image](./preuves/injection.png)
+
+### Conformité RGPD & Protection des Données
+
+- Capture écran du formulaire d'inscription (champs visibles)
+![Mon image](./preuves/inscription.png)
+- Capture écran montrant la case à cocher décochée
+![Mon image](./preuves/case.png)
+- Capture écran du lien "Mentions Légales" dans le footer
+![Mon image](./preuves/mention_legale.png)
+- Contenu de la page `/legal` ou `/privacy`
+![Mon image](./preuves/legal.png)
+
+### Protection CSRF
+
+- Code source montrant la génération/validation du token CSRF (ou JWT)
+![Mon image](./preuves/token.png)
+- Capture écran de l'inspecteur montrant le token dans le formulaire
+![Mon image](./preuves/tokenimg.jpg)
+
+### Headers de Sécurité HTTP
+
+- Inspecteur réseau (Onglet Network) montrant les headers
+![Mon image](./preuves/tokenimg.jpg)
+- Capture écran de l'URL en HTTPS (pas HTTP)
+
+Mon application n’est pas déployée, donc aucune URL HTTPS n’est disponible.
+En mode localhost, le HTTPS n’est pas applicable.
+Si nécessaire, un déploiement peut être effectué sur Render/Netlify/Vercel.
+
+- Commande : `curl -I https://votre-app.com | grep -i "X-Content\|X-Frame"`
+
+Inapplicable sans HTTPS / domaine
+
+### Tests de Sécurité & Audits
+
+- Capture écran du résultat `npm audit`
+![Mon image](./preuves/audit.png)
+
+- Checklist d'Audit remplie à 90%+
+[Voir le fichier](Checklist-Audit-Securite.md)
+

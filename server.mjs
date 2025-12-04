@@ -10,7 +10,7 @@ import logoutHandler from "./api/logout.js";
 import gridsCreate from "./api/grids/create.js";
 import gridsList from "./api/grids/list.js";
 import gridsPublicList from "./api/grids/public-list.js";
-import gridsView from "./api/grids/view/[id].js";
+import gridsView from "./api/grids/view/id.js";
 import gridsUpdate from "./api/grids/update/id.js";
 import gridsDelete from "./api/grids/delete/id.js";
 

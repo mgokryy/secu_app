@@ -33,7 +33,17 @@ export default function PlayGrid() {
   const token = localStorage.getItem("token");
 
   async function loadGrid() {
-    const res = await fetch(`/api/grids/view/${id}`);
+    const res = await fetch(`/api/grids/view/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      console.error("Erreur chargement grille:", await res.text());
+      return;
+    }
+
     const data = await res.json();
 
     const size = data.grid.size;
@@ -49,13 +59,14 @@ export default function PlayGrid() {
     setGrid(matrix);
     setInfo(data.grid);
     setWords(data.words || []);
-
     setStartTime(Date.now());
     setElapsed(0);
     setHasFinished(false);
     setHasSavedScore(false);
     setScore(null);
   }
+
+  
   
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {

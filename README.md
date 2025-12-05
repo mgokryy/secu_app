@@ -443,7 +443,7 @@ Voici donc les preuves de validations du système d'authentification:
 - Capture écran du formulaire de connexion:
 ![Mon image](./preuves/connexion.png)
 - Capture écran du cookie dans l'inspecteur réseau (HttpOnly, Secure, SameSite visibles):
-![Mon image](./preuves/cookies.png)
+![Mon image](./preuves/cookies.jpg)
 
 ### Système de Rôles & Contrôle d'Accès
 
@@ -504,4 +504,5 @@ Inapplicable sans HTTPS / domaine
 
 - Checklist d'Audit remplie à 90%+
 [Voir le fichier](Checklist-Audit-Securite.md)
+
 

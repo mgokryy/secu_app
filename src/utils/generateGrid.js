@@ -1,5 +1,14 @@
+// Utilisée par :
+// - CreateGrid.jsx (pour générer un aperçu avant l’enregistrement)
+// - EditGrid.jsx (si l’édition permet de régénérer une grille)
+//
+// Rôle :
+// Génère une grille de mots mêlés contenant tous les mots fournis,
+// en les plaçant aléatoirement, puis en remplissant le reste de lettres aléatoires.
+// La logique de placement (direction, collisions autorisées, limites) est
+// entièrement gérée en interne pour laisser les composants front simplifiés.
 export function generateGrid(size, words) {
-  // On place les mots avant le remplissage aléatoire pour éviter qu'ils soient bloqués.
+  
   let grid = Array.from({ length: size }, () =>
     Array.from({ length: size }, () => "")
   );

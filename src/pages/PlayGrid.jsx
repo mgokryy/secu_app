@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-const COLORS = [
-  "#ffb3ba",
-  "#baffc9",
-  "#bae1ff",
-  "#ffffba",
-  "#ffdfba",
-  "#e2baff",
-];
+const COLORS = ["#ffb3ba", "#baffc9", "#bae1ff", "#ffffba", "#ffdfba", "#e2baff"];
 
 export default function PlayGrid() {
   const { id } = useParams();
@@ -34,9 +27,7 @@ export default function PlayGrid() {
 
   async function loadGrid() {
     const res = await fetch(`/api/grids/view/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (!res.ok) {
@@ -48,6 +39,8 @@ export default function PlayGrid() {
 
     const size = data.grid.size;
 
+    // La grille est reconstruite à partir de cellules individuelles afin
+    // d’être indépendante de la structure API — cela garantit un affichage stable.
     const matrix = Array.from({ length: size }, () =>
       Array.from({ length: size }, () => "")
     );
@@ -66,13 +59,12 @@ export default function PlayGrid() {
     setScore(null);
   }
 
-  
-  
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // On recharge la grille quand l’ID change : logique de navigation.
   useEffect(() => {
     loadGrid();
   }, [id]);
 
+  // Timer simple : actualisé chaque seconde tant que la partie est active.
   useEffect(() => {
     if (!startTime || hasFinished) return;
 
@@ -83,11 +75,13 @@ export default function PlayGrid() {
     return () => clearInterval(intervalId);
   }, [startTime, hasFinished]);
 
+
   if (!grid) return <p>Chargement…</p>;
 
   const computeScore = (seconds) => Math.max(0, 1000 - seconds);
 
-  const saveScore = async (durationSeconds, scoreValue) => {
+  async function saveScore(durationSeconds, scoreValue) {
+    // On évite les doublons si plusieurs effets se déclenchent simultanément.
     if (hasSavedScore || !info) return;
 
     try {
@@ -104,20 +98,18 @@ export default function PlayGrid() {
         }),
       });
 
-      
       if (!res.ok) {
         console.error("Erreur enregistrement score", await res.text());
         return;
       }
 
       setHasSavedScore(true);
-      console.log("Score enregistré");
-
     } catch (err) {
       console.error("Erreur réseau score", err);
     }
-  };
+  }
 
+  // Déterminer la direction d’un geste représente l’intention du joueur.
   const getDxDy = (last, x, y) => ({
     dx: Math.sign(x - last.x),
     dy: Math.sign(y - last.y),
@@ -125,9 +117,12 @@ export default function PlayGrid() {
 
   const isSameCell = (last, x, y) => last.x === x && last.y === y;
 
+  // Un mouvement diagonal ou orthogonal est autorisé; tout autre angle est ignoré
+  // pour éviter des sélections incohérentes.
   const isDiagonalOrStraight = (dx, dy) =>
     Math.abs(dx) <= 1 && Math.abs(dy) <= 1;
 
+  // La sélection ne progresse que cellule par cellule pour garantir une direction stable.
   const isNextCell = (last, x, y, direction) =>
     x === last.x + direction.dx && y === last.y + direction.dy;
 
@@ -148,8 +143,8 @@ export default function PlayGrid() {
       if (isSameCell(last, x, y)) return prev;
 
       const { dx, dy } = getDxDy(last, x, y);
-      if (dx === 0 && dy === 0) return prev;
 
+      // La première direction fixée contraint tout le reste du mot.
       if (!direction) {
         if (!isDiagonalOrStraight(dx, dy)) return prev;
 
@@ -161,10 +156,13 @@ export default function PlayGrid() {
           : prev;
       }
 
+      // Si le geste dévie, on ignore pour garder une ligne parfaite.
       if (dx !== direction.dx || dy !== direction.dy) return prev;
 
       if (isNextCell(last, x, y, direction)) {
+        // Évite de repasser plusieurs fois sur la même lettre.
         if (prev.some((c) => c.x === x && c.y === y)) return prev;
+
         return [...prev, { x, y }];
       }
 
@@ -172,6 +170,7 @@ export default function PlayGrid() {
     });
   };
 
+  // Valide si la sélection correspond à un mot (normal ou inversé).
   const endSelection = () => {
     if (!selecting || selectedCells.length === 0) {
       setSelecting(false);
@@ -183,6 +182,7 @@ export default function PlayGrid() {
     const letters = selectedCells.map((c) => grid[c.y][c.x]).join("");
     const reversed = [...letters].reverse().join("");
 
+    // Set utilisé ici pour éviter les collisions sensibles à la casse.
     const upperWords = new Set(words.map((w) => w.toUpperCase()));
 
     let foundWord = null;
@@ -190,6 +190,7 @@ export default function PlayGrid() {
     if (upperWords.has(reversed)) foundWord = reversed;
 
     if (foundWord && !foundWords.includes(foundWord)) {
+      // Couleur cyclique pour différencier visuellement les mots trouvés.
       const color = COLORS[foundWords.length % COLORS.length];
 
       setFoundWords((prev) => [...prev, foundWord]);
@@ -199,6 +200,8 @@ export default function PlayGrid() {
       ]);
 
       const newFoundCount = foundWords.length + 1;
+
+      // Condition de fin : tous les mots découverts.
       if (newFoundCount === words.length && words.length > 0) {
         const duration = Math.floor((Date.now() - startTime) / 1000);
         setElapsed(duration);
@@ -214,7 +217,8 @@ export default function PlayGrid() {
     setSelectedCells([]);
     setDirection(null);
   };
-  
+
+  // Détection mobile : convertir un toucher en coordonnées de cellule.
   const handleTouch = (e, callback) => {
     const touch = e.touches[0];
     const el = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -230,14 +234,15 @@ export default function PlayGrid() {
   const handleTouchMove = (e) => handleTouch(e, continueSelection);
   const handleTouchEnd = () => endSelection();
 
-  const getFoundColor = (x, y) => {
-    const cell = foundCells.find((c) => c.x === x && c.y === y);
-    return cell ? cell.color : null;
-  };
+  const getFoundColor = (x, y) =>
+    foundCells.find((c) => c.x === x && c.y === y)?.color || null;
 
   const isSelected = (x, y) =>
     selectedCells.some((c) => c.x === x && c.y === y);
+
   return (
+    // Le container gère toute l’interaction (clavier, souris, tactile)
+    // afin d'unifier la logique de sélection du mot.
     <section
       role="button"
       aria-label="Zone de jeu"
@@ -252,10 +257,9 @@ export default function PlayGrid() {
         padding: "20px",
         maxWidth: "600px",
         margin: "0 auto",
-        touchAction: "none",
+        touchAction: "none", // empêche le scroll qui casserait les sélections
       }}
     >
-
       <h2 style={{ marginBottom: "10px" }}>Grille : {info?.title}</h2>
 
       <div style={{ marginBottom: "10px" }}>
@@ -278,22 +282,17 @@ export default function PlayGrid() {
           marginBottom: "20px",
         }}
       >
-        
         <table style={{ borderCollapse: "collapse" }}>
           <tbody>
             {grid.map((row, y) => (
               <tr key={`row-${y}`}>
                 {row.map((letter, x) => {
-                  const foundColor = getFoundColor(x, y);
+                  const color = getFoundColor(x, y);
                   const selected = isSelected(x, y);
-
-                  const bgColor = selected
-                    ? "#a4c8ff"
-                    : foundColor || "white";
 
                   return (
                     <td
-                      key={`cell-${y}-${x}`}  
+                      key={`cell-${y}-${x}`}
                       data-x={x}
                       data-y={y}
                       onMouseDown={() => startSelection(y, x)}
@@ -307,7 +306,7 @@ export default function PlayGrid() {
                         userSelect: "none",
                         cursor: "pointer",
                         transition: "background-color 0.2s ease",
-                        backgroundColor: bgColor,
+                        backgroundColor: selected ? "#a4c8ff" : color || "white",
                         fontWeight: "600",
                       }}
                     >
@@ -319,13 +318,10 @@ export default function PlayGrid() {
             ))}
           </tbody>
         </table>
-
-
       </div>
 
       <div style={{ marginTop: "25px" }}>
         <h3>Mots à trouver :</h3>
-
         <div className="word-badges-container">
           {words.map((w) => (
             <div

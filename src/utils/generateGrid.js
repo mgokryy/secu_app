@@ -1,4 +1,5 @@
 export function generateGrid(size, words) {
+  // On place les mots avant le remplissage aléatoire pour éviter qu'ils soient bloqués.
   let grid = Array.from({ length: size }, () =>
     Array.from({ length: size }, () => "")
   );
@@ -8,6 +9,8 @@ export function generateGrid(size, words) {
   }
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  // Remplir ensuite garantit une grille visuellement homogène.
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
       if (grid[i][j] === "") {
@@ -23,39 +26,35 @@ function placeWord(grid, word) {
   const size = grid.length;
   let placed = false;
 
-  // 8 directions possibles
+  // Toutes les directions possibles : augmente la variété visuelle.
   const directions = [
-    { dx: 1, dy: 0 },   
-    { dx: -1, dy: 0 },  
-    { dx: 0, dy: 1 },   
-    { dx: 0, dy: -1 },  
-    { dx: 1, dy: 1 },   
-    { dx: -1, dy: 1 },  
-    { dx: 1, dy: -1 },  
-    { dx: -1, dy: -1 }, 
+    { dx: 1, dy: 0 },
+    { dx: -1, dy: 0 },
+    { dx: 0, dy: 1 },
+    { dx: 0, dy: -1 },
+    { dx: 1, dy: 1 },
+    { dx: -1, dy: 1 },
+    { dx: 1, dy: -1 },
+    { dx: -1, dy: -1 },
   ];
 
+  // Placement aléatoire : stratégie simple mais efficace sans algorithmie lourde.
   while (!placed) {
     const row = Math.floor(Math.random() * size);
     const col = Math.floor(Math.random() * size);
 
-    // choisir une direction aléatoire
     const { dx, dy } = directions[Math.floor(Math.random() * directions.length)];
 
-    // vérifier si le mot tient dans la grille
-    let endRow = row + dy * (word.length - 1);
-    let endCol = col + dx * (word.length - 1);
-
-    if (
-      endRow < 0 ||
-      endRow >= size ||
-      endCol < 0 ||
-      endCol >= size
-    ) {
-      continue; 
+    // Vérification rapide pour éviter un parcours inutile du mot.
+    const endRow = row + dy * (word.length - 1);
+    const endCol = col + dx * (word.length - 1);
+    if (endRow < 0 || endRow >= size || endCol < 0 || endCol >= size) {
+      continue;
     }
 
     let canPlace = true;
+
+    // Autorise les croisements uniquement si cohérents (même lettre).
     for (let i = 0; i < word.length; i++) {
       const r = row + dy * i;
       const c = col + dx * i;
@@ -68,6 +67,7 @@ function placeWord(grid, word) {
 
     if (!canPlace) continue;
 
+    // Placement effectif
     for (let i = 0; i < word.length; i++) {
       const r = row + dy * i;
       const c = col + dx * i;

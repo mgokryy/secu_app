@@ -181,18 +181,22 @@ DB_HOST=localhost
 DB_USER=secu_user
 DB_PASSWORD=VOTRE_MOT_DE_PASSE_SECURISE
 DB_NAME=mots_meles
+DB_PORT=votre_port
 
 JWT_SECRET=votre_secret_jwt_tres_long_et_complexe_ici_123456789
 ```
 
+Pour générer un token utiliser cette commande:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
 
 ---
 
 ## Lancement du projet
 
 Le projet nécessite de lancer deux serveurs simultanément :
-
-### Option 1 : Deux terminaux séparés
 
 **Backend** :
 
@@ -206,27 +210,10 @@ npm run dev:api
 npm run dev
 ```
 
-### Option 2 : Avec concurrently
-
-```bash
-npm install -g concurrently
-```
-
-Ajoutez dans `package.json` :
-
-```json
-"dev:all": "concurrently \"npm run dev:api\" \"npm run dev\""
-```
-
-Lancez :
-
-```bash
-npm run dev:all
-```
-
 ---
 
 ## Structure du projet
+
 ```
 secu_app/
 ├── api/                          # Backend Express
